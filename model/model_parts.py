@@ -9,6 +9,7 @@ import copy
 # Todo later, relative positional encoding
 
 class MultiHeadAttention(nn.Module):
+
     def __init__(self, model_dim, n_heads):
         super(MultiHeadAttention, self).__init__()
 
@@ -58,6 +59,7 @@ class MultiHeadAttention(nn.Module):
 
 
 class FeedForwardBlock(nn.Module):
+
     def __init__(self, model_dim, ff_dim):
         super(FeedForwardBlock, self).__init__()
 
@@ -72,6 +74,40 @@ class FeedForwardBlock(nn.Module):
         return x
 
 
+class TransBlock(nn.Module):
+
+    # todo: add dropout
+    def __init__(self, model_dim, n_heads, ff_dim=None):
+        super(TransBlock, self).__init__()
+
+        self.model_dim = model_dim
+        self.n_heads = n_heads
+
+        self.ff_dim = model_dim if ff_dim == None else ff_dim
+
+        self.attention_block = MultiHeadAttention(self.model_dim, self.n_heads)
+        self.ff_block = FeedForwardBlock(self.model_dim, self.ff_dim)
+
+        self.norm1 = nn.LayerNorm(model_dim)
+        self.norm2 = nn.LayerNorm(model_dim)
+
+    def forward(self, x):
+
+        # Here using prenorm
+        x = self.norm1(x)
+        x = self.attention_block(x)
+        x = self.norm2(x)
+        x = self.ff_block(x)
+
+        return x
+
+
+
+
+
+    
+
+
 
 
 # test = MultiHeadAttention(12, 4)
@@ -82,3 +118,9 @@ class FeedForwardBlock(nn.Module):
 # 
 # 
 # print(test(tnsr))
+
+test = TransBlock(12, 4, 30)
+
+tnsr = torch.rand(2, 3, 12)
+
+test(tnsr)
