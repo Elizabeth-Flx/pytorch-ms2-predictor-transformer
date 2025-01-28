@@ -101,7 +101,24 @@ class TransBlock(nn.Module):
 
         return x
 
+class PositionalEncoding(nn.Module):
 
+    def __init__(self, model_dim, dropout=0.1, max_len=5000):
+        super(PositionalEncoding, self).__init__()
+        self.dropout = nn.Dropout(dropout)
+
+        position = torch.arange(max_len).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, model_dim, 2) * (-math.log(10000) / model_dim))
+        pos_enc = torch.zeros(max_len, 1, model_dim)
+        pos_enc[:, 0, 0::2] = torch.sin(position * div_term)
+        pos_enc[:, 0, 1::2] = torch.cos(position * div_term)
+
+        # todo: what does this do?
+        self.register_buffer('pe', pos_enc)
+
+    def forward(self, x):
+        x = x + self.pe[:x.size()[0]]
+        return self.dropout(x)
 
 
 
@@ -111,6 +128,7 @@ class TransBlock(nn.Module):
 
 
 # test = MultiHeadAttention(12, 4)
+        pos_enc[:, 0, 0::2] = torch.sin(position * div_term)
 # 
 # tnsr = torch.rand(1, 2, 12)
 # 
@@ -119,8 +137,10 @@ class TransBlock(nn.Module):
 # 
 # print(test(tnsr))
 
-test = TransBlock(12, 4, 30)
+# test = TransBlock(12, 4, 30)
 
-tnsr = torch.rand(2, 3, 12)
+# tnsr = torch.rand(2, 3, 12)
 
-test(tnsr)
+# test(tnsr)
+
+tmp = PositionalEncoding(10, max_len=5)
