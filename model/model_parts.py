@@ -101,6 +101,8 @@ class TransBlock(nn.Module):
 
         return x
 
+
+# https://stackoverflow.com/questions/77444485/using-positional-encoding-in-pytorch
 class PositionalEncoding(nn.Module):
 
     def __init__(self, model_dim, dropout=0.1, max_len=5000):
