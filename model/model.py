@@ -2,9 +2,10 @@
 import torch
 import torch.nn as nn
 
-import model_parts as mp
+from model import model_parts as mp
 
 CUSTOM_ALPHABET = {
+    '-': 0,
     'A': 1,
     'C': 2,
     'D': 3,
@@ -27,7 +28,7 @@ CUSTOM_ALPHABET = {
     'Y': 20,
     'm': 21, # oxidized methionine
 }
-ALPHABET_SIZE = max(CUSTOM_ALPHABET.values())
+ALPHABET_SIZE = len(CUSTOM_ALPHABET)
 
 
 class TransMS2Predictor(nn.Module):
@@ -61,22 +62,23 @@ class TransMS2Predictor(nn.Module):
 
     def forward(self, x):
         
+        print(x.size())
+        x = self.peptide_embedder(x)
 
-
-
-        pass
-
-
-
-
-test = "/cmnfs/data/proteomics/Prosit_PTMs/Transformer_Train/no_aug_test.parquet"
+        print(x.size())
 
 
 
 
-import pandas as pd
-tmp = pd.read_parquet(test, engine='pyarrow')
 
-print(tmp)
+# test = "/cmnfs/data/proteomics/Prosit_PTMs/Transformer_Train/no_aug_test.parquet"
+
+
+
+
+# import pandas as pd
+# tmp = pd.read_parquet(test, engine='pyarrow')
+
+# print(tmp)
 
 
