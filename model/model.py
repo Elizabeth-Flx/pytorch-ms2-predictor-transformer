@@ -62,10 +62,26 @@ class TransMS2Predictor(nn.Module):
 
     def forward(self, x):
         
-        print(x.size())
         x = self.peptide_embedder(x)
+        x = self.pos_enc(x)
 
-        print(x.size())
+        for i in range(len(self.trans_blocks)):
+            trans_block = self.trans_blocks[i]
+            x = trans_block(x)
+
+
+        x = self.penult_linear(x)
+        x = self.penult_norm(x)
+        x = self.relu(x)
+
+        x = self.final_linear(x)
+        x = self.sigmoid(x)
+
+        x = torch.mean(x, dim=1, keepdim=True)
+
+        return x
+
+
 
 
 
