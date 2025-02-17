@@ -42,6 +42,9 @@ class TransMS2Predictor(nn.Module):
 
         self.output_units = 174
 
+        # Metadata Encoder (charge + method + machine + energy)
+        self.metadata_encoder = nn.Linear(6+2+3+1, 2*self.embedding_dim)
+
         # Embedding (onehot to embedding)
         self.peptide_embedder = nn.Linear(ALPHABET_SIZE, self.embedding_dim)
 
@@ -60,24 +63,32 @@ class TransMS2Predictor(nn.Module):
         self.final_linear = nn.Linear(self.penult_dim, self.output_units)
         self.sigmoid = nn.Sigmoid()
 
-    def forward(self, x):
+    def forward(self, x, metadata):
         
+        # Metadata processing
+        metadata = self.self.metadata_encoder(metadata)     # bs, 2*emb_dim
+        metadata = metadata[:, None, :]                     # bs, 1, 2*emb_dim  
+        gamma, beta = torch.chunk(metadata, 2, dim=-1)      # bs, 1, emb_dim
+
+        # Peptide processing
         x = self.peptide_embedder(x)
-        x = self.pos_enc(x)
+        x = self.pos_enc(x)                                 # bs, seq_len, emb_dim
+
+        # Integrate metadata
+        x = x * gamma + beta
 
         for i in range(len(self.trans_blocks)):
             trans_block = self.trans_blocks[i]
             x = trans_block(x)
 
-
-        x = self.penult_linear(x)
+        x = self.penult_linear(x)                           # bs, seq_len, penult_dim
         x = self.penult_norm(x)
         x = self.relu(x)
 
-        x = self.final_linear(x)
+        x = self.final_linear(x)                            # bs, seq_len, output_units
         x = self.sigmoid(x)
 
-        x = torch.mean(x, dim=1, keepdim=True)
+        x = torch.mean(x, dim=1, keepdim=True)              # bs, 1, output_units
 
         return x
 
