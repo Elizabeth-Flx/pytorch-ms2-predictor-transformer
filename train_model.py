@@ -50,6 +50,9 @@ print(len(train_loader))
 
 for epoch in range(10):
     print (f"Epoch {epoch}")
+    print("+" + "-"*18 + "+")
+
+
     for i in range(len(train_loader)):
     # for i in range(10):
 
@@ -80,10 +83,15 @@ for epoch in range(10):
         # Update weights
         optimizer.step()
 
-        if i % 100 == 0:
+
+        # Print progress
+        tick_numbers = (len(train_loader) // 20) + 1
+        # print(tick_numbers)
+        if i % tick_numbers == 0:
             print("=", end="")
 
 
 
     # print loss
+    print("")
     print(f"Epoch {epoch}, Loss: {loss.mean().item()}")
