@@ -66,7 +66,7 @@ class TransMS2Predictor(nn.Module):
     def forward(self, x, metadata):
         
         # Metadata processing
-        metadata = self.metadata_encoder(metadata)     # bs, 2*emb_dim
+        metadata = self.metadata_encoder(metadata)          # bs, 2*emb_dim
         metadata = metadata[:, None, :]                     # bs, 1, 2*emb_dim  
         gamma, beta = torch.chunk(metadata, 2, dim=-1)      # bs, 1, emb_dim
 
@@ -78,7 +78,7 @@ class TransMS2Predictor(nn.Module):
         x = x * gamma + beta
 
         for i in range(len(self.trans_blocks)):
-            trans_block = self.trans_blocks[i]
+            trans_block = self.trans_blocks[i].to(x.device)
             x = trans_block(x)
 
         x = self.penult_linear(x)                           # bs, seq_len, penult_dim
@@ -91,21 +91,4 @@ class TransMS2Predictor(nn.Module):
         x = torch.mean(x, dim=1, keepdim=True)              # bs, 1, output_units
 
         return x
-
-
-
-
-
-
-
-# test = "/cmnfs/data/proteomics/Prosit_PTMs/Transformer_Train/no_aug_test.parquet"
-
-
-
-
-# import pandas as pd
-# tmp = pd.read_parquet(test, engine='pyarrow')
-
-# print(tmp)
-
 

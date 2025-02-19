@@ -11,9 +11,11 @@ print(torch.cuda.is_available())
 print(torch.cuda.device_count())
 print(torch.cuda.device(0))
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
 
 
-model = TransMS2Predictor()
+model = TransMS2Predictor().to(device)
 
 loss_cos = nn.CosineSimilarity(dim=2, eps=1e-6)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -28,6 +30,8 @@ paths = (
     "/cmnfs/proj/prosit_astral/datasets/proteome_tools_dlomix_format_val.parquet",
     # "/cmnfs/proj/prosit_astral/datasets/proteome_tools_dlomix_format_test.parquet"
 )
+
+import pandas as pd
 
 dataset = ProteomeToolsDataset(paths)
 
@@ -46,14 +50,14 @@ print(len(train_loader))
 
 for epoch in range(10):
     print (f"Epoch {epoch}")
-    # for i in range(len(train_loader)):
-    for i in range(10):
+    for i in range(len(train_loader)):
+    # for i in range(10):
 
         batch = next(iter(train_loader))
 
-        x_sequence = batch[0]
-        x_metadata = batch[1]
-        y = batch[2][:, None, :]
+        x_sequence = batch[0].to(device)
+        x_metadata = batch[1].to(device)
+        y = batch[2][:, None, :].to(device)
 
         # print(x_sequence.dtype)
         # print(x_metadata.dtype)

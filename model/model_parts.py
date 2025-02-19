@@ -115,34 +115,17 @@ class PositionalEncoding(nn.Module):
         pos_enc[:, 0, 0::2] = torch.sin(position * div_term)
         pos_enc[:, 0, 1::2] = torch.cos(position * div_term)
 
+        self.pe = pos_enc
+
         # todo: what does this do?
-        self.register_buffer('pe', pos_enc)
+        # self.register_buffer('pe', pos_enc)
 
     def forward(self, x):
-        x = x + self.pe[:x.size()[0]]
+        pe = self.pe.to(x.device)  
+        x = x + pe[:x.size()[0]]
         return self.dropout(x)
 
 
 
     
 
-
-
-
-# test = MultiHeadAttention(12, 4)
-        pos_enc[:, 0, 0::2] = torch.sin(position * div_term)
-# 
-# tnsr = torch.rand(1, 2, 12)
-# 
-# print(tnsr)
-# 
-# 
-# print(test(tnsr))
-
-# test = TransBlock(12, 4, 30)
-
-# tnsr = torch.rand(2, 3, 12)
-
-# test(tnsr)
-
-tmp = PositionalEncoding(10, max_len=5)
