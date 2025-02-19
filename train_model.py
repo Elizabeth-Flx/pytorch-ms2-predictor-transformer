@@ -15,8 +15,8 @@ print(torch.cuda.device(0))
 
 model = TransMS2Predictor()
 
-loss_cos = nn.CosineSimilarity(dim=1, eps=1e-6)
-optimizer = optim.Adam(model.parameters(), lr=0.0001)
+loss_cos = nn.CosineSimilarity(dim=2, eps=1e-6)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 batch_size = 1024
 
