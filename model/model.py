@@ -66,7 +66,7 @@ class TransMS2Predictor(nn.Module):
     def forward(self, x, metadata):
         
         # Metadata processing
-        metadata = self.self.metadata_encoder(metadata)     # bs, 2*emb_dim
+        metadata = self.metadata_encoder(metadata)     # bs, 2*emb_dim
         metadata = metadata[:, None, :]                     # bs, 1, 2*emb_dim  
         gamma, beta = torch.chunk(metadata, 2, dim=-1)      # bs, 1, emb_dim
 

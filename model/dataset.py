@@ -29,6 +29,8 @@ class ProteomeToolsDataset(Dataset):
         sequence = sequence + "-"*(30-len(sequence))
         indexes = [CUSTOM_ALPHABET[aa] for aa in sequence]
 
-        sequence_oh = torch.tensor(np.eye(len(CUSTOM_ALPHABET))[indexes])
+        sequence_oh = torch.tensor(np.eye(len(CUSTOM_ALPHABET))[indexes]).float()
 
-        return sequence_oh, metadata
+        intensities = torch.tensor(row["intensities_raw"]).float()
+
+        return sequence_oh, metadata, intensities
