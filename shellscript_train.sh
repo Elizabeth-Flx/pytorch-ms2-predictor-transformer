@@ -33,4 +33,4 @@ conda activate pytorch_ms2
 # export HF_HOME='/cmnfs/proj/prosit/ptms/huggingface'
 # export HF_DATASETS_CACHE='/cmnfs/proj/prosit/ptms/huggingface/datasets'
 
-python -u train_model.py &> /logs/outputs/$1.log
+python -u train_model.py &> ./logs/outputs/$1.log
