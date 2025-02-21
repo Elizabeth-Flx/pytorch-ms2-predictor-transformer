@@ -95,5 +95,4 @@ for epoch in range(num_epochs):
 
     # Print epoch loss
     print("")
-    print("+" + "-" * 30 + "+")
     print(f"\nEpoch {epoch+1} Loss: {loss.mean().item()}\n\n")
