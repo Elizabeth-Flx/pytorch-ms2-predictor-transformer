@@ -58,14 +58,14 @@ print("Data loaded successfully")
 
 # Training loop parameters
 num_epochs = 10
-log_interval = 20  # Frequency of logging updates
+total_ticks = 20  # Number or ticks
 
 print("Starting training...")
 print(f"Total batches per epoch: {len(train_loader)}")
 
 for epoch in range(num_epochs):
     print(f"Epoch {epoch+1}/{num_epochs}")
-    print("+" + "-"*18 + "+")
+    print("_"*total_ticks)
 
     for batch_idx, batch in enumerate(train_loader):
 
@@ -89,10 +89,9 @@ for epoch in range(num_epochs):
         # Print progress
 
         # Print training progress every few batches
-        if batch_idx % (len(train_loader) // log_interval + 1) == 0:
+        if batch_idx % (len(train_loader) // total_ticks + 1) == 0:
             print("=", end="")
 
 
     # Print epoch loss
-    print("")
-    print(f"\nEpoch {epoch+1} Loss: {loss.mean().item()}\n\n")
+    print(f"\nLoss: {loss.mean().item()}\n\n")
