@@ -5,6 +5,17 @@ from model.model import TransMS2Predictor
 from model.dataset import ProteomeToolsDataset
 from torch.utils.data import DataLoader
 
+from dotenv import load_dotenv
+import os
+import wandb
+
+load_dotenv()  # Load variables from .env
+wandb.login(key=os.getenv("WANDB_API_KEY"))
+wandb.init(
+    project="ms2_pytorch",
+    entity='elizabeth-lochert-flx'
+)
+
 
 # check if cuda is available
 print(torch.cuda.is_available())
@@ -45,16 +56,17 @@ print("Data loaded")
 
 print("Start training")
 
+
+
+
 # print number of batches
 print(len(train_loader))
 
 for epoch in range(10):
-    print (f"Epoch {epoch}")
+    print (f"Epoch {epoch+1}")
     print("+" + "-"*18 + "+")
 
-
     for i in range(len(train_loader)):
-    # for i in range(10):
 
         batch = next(iter(train_loader))
 
@@ -62,19 +74,9 @@ for epoch in range(10):
         x_metadata = batch[1].to(device)
         y = batch[2][:, None, :].to(device)
 
-        # print(x_sequence.dtype)
-        # print(x_metadata.dtype)
-
         # Forward pass
         y_pred = model(x_sequence, x_metadata)
-
-        # print(y.shape)
-        # print(y_pred.shape)
-
-
         loss = loss_cos(y_pred, y)
-
-        # print(loss)
 
         # Backward pass
         optimizer.zero_grad()
@@ -83,6 +85,8 @@ for epoch in range(10):
         # Update weights
         optimizer.step()
 
+        
+        wandb.log({"loss": loss.mean().item()})
 
         # Print progress
         tick_numbers = (len(train_loader) // 20) + 1
@@ -91,7 +95,8 @@ for epoch in range(10):
             print("=", end="")
 
 
-
     # print loss
     print("")
-    print(f"Epoch {epoch}, Loss: {loss.mean().item()}")
+    print(f"Loss: {loss.mean().item()}")
+    print("")
+    print("")
